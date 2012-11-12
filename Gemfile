@@ -1,11 +1,30 @@
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.8'
+gem 'bootstrap-sass', '2.0.4'
+gem 'bcrypt-ruby', '3.0.1'
+gem 'formtastic'
+
+
+group :development, :test do
+  gem 'sqlite3','1.3.5'
+  gem 'rspec-rails','2.11.0'
+end
+
+group :development do
+  gem 'annotate', '2.5.0'
+end
+
+group :test do
+  gem 'factory_girl', '2.1.0'
+  gem 'factory_girl_rails','1.2'
+  gem 'capybara', '1.1.2'
+end
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
+
 
 gem 'json'
 
