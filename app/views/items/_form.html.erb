@@ -1,0 +1,12 @@
+<%= semantic_form_for @item do |form| %>
+	<%= form.inputs do %>
+		<%= form.input :category_id %>
+		<%= form.input :item_number %>
+		<%= form.input :description %>
+		<%= form.input :purchase_date, :start_year => 1990%>
+		<%= form.input :value %>
+	<% end %>
+	<%= form.actions do %>
+		<%= form.action :submit, :as => :button %>
+	<% end %>
+<% end %>
