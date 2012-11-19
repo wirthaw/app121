@@ -1,9 +1,9 @@
 <%= semantic_form_for @item do |form| %>
 	<%= form.inputs do %>
-		<%= form.input :category_id %>
+		<%= form.input :category_id , :as => :select,  :collection => Category.all%>
 		<%= form.input :item_number %>
 		<%= form.input :description %>
-		<%= form.input :purchase_date, :start_year => 1990%>
+		<%= form.input :purchase_date, :as => :string %>
 		<%= form.input :value %>
 	<% end %>
 	<%= form.actions do %>

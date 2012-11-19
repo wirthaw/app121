@@ -3,9 +3,53 @@ class ItemsController < ApplicationController
   def index
     @items = Item.all
   end
-
+  
   def new
     @item = Item.new
+  end
+  
+  def show
+  	@item = Item.find(params[:id])
+  	@category = Category.find(@item.category_id)
+  end	
+  
+  def edit
+  	@item = Item.find(params[:id])
+  	@category = Category.find(@item.category_id)
+  	@categories = Category.all
+  end
+
+  def create
+    @item = Item.new(params[:item])
+    if @item.save
+      redirect_to item_path(@item)
+      flash[:notice] = "Item saved successfully"
+    else
+      render(:new)
+      flash[:notice] = "Could not save Item"
+    end
+  end
+  
+  def update
+    @item = Item.find(params[:id])
+    if @item.update_attributes(params[:item])
+      redirect_to item_path
+      flash[:notice] = "Item successfully updated"
+    else
+      render(:edit)
+      flash[:notice] = "Item could not be updated!"
+    end
+  end
+  
+  def destroy
+    @item = Item.find(params[:id])
+    if @item.destroy
+      redirect_to items_path
+      flash[:notice] = "Category has been removed"
+    else
+      redirect_to items_path
+      flash[:error] = "Category could not be removed"
+    end
   end
 
 end

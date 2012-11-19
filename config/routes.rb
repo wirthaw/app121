@@ -1,6 +1,9 @@
 App121::Application.routes.draw do
   resources :items
   resources :categories
+
+  root :to => 'categories#index'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

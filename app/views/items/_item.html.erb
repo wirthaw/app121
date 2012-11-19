@@ -1,0 +1,4 @@
+<%= link_to "#{item.category.name} - Item ##{item.item_number}", item_path(item) %>
+<%= link_to "Edit", edit_item_path(item) %>
+<%= button_to "Delete", item, :method => :delete %>
+<br />
