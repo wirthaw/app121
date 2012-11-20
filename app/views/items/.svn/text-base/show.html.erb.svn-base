@@ -3,4 +3,4 @@
 <%= "Item Number: #{@item.item_number}" %> <br />
 <%= "Description: #{@item.description}" %> 
 </p>
-<%= link_to "Back to Item Search", items_path %>
+<%= link_to "Back to all Items", items_path %>

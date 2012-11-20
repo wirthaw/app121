@@ -4,6 +4,7 @@ gem 'rails', '3.2.8'
 gem 'bootstrap-sass', '2.0.4'
 gem 'bcrypt-ruby', '3.0.1'
 gem 'formtastic'
+gem 'validates_timeliness', '~> 3.0.2'
 
 
 group :development, :test do

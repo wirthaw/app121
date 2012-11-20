@@ -1,2 +1,3 @@
-<p><%= @category.name %></p>
+<h1><%= @category.name %></h1>
 <p><%= @category.description %> </p>
+<%= link_to "Back", categories_path %>

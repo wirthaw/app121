@@ -1,3 +1,12 @@
-<h1>Items</h1>
-<p><%= link_to "New Item", new_item_path %></p>
-<%= render @items %>
+<h1>Select A Category to Find Items</h1>
+<%= semantic_form_for :category, :url => 'items/search' do |form| %>
+	<%= form.inputs do %>
+		<%= form.input :category, :as => :select, :collection => 
+		Category.order("name asc").map{ |c| [c.name, c.id]} %>
+	<% end %>
+	<%= form.actions do %>
+		<%= form.action :submit, :as => :button %>
+	<% end %>
+<% end %>
+
+<p><%= link_to "Create a New Item", new_item_path %></p>

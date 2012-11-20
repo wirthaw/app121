@@ -1,8 +1,11 @@
 App121::Application.routes.draw do
+  match '/items/search(/:category)', :controller => 'items', :action => 'search'
+  
   resources :items
   resources :categories
 
   root :to => 'categories#index'
+
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
