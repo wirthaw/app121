@@ -1,5 +1,6 @@
 class Item < ActiveRecord::Base
   belongs_to :category
+  has_many :reservations
   
   attr_accessible :category_id, :description, :item_number, :purchase_date, :value
 
