@@ -1,0 +1,25 @@
+<%= semantic_form_for @reservation do |form| %>
+	<%= form.inputs do %>
+		<%= form.input :user_id %>
+		<%= form.input :number_of_participants %>
+		<%= form.input :reservation_date %>
+	<% end %>
+	
+	<table border="2">
+		<tr>
+		<th>Times</th>
+			<% @courts.each do |court| %>
+				<th> <%= court.name%> </th>
+			<% end %>
+		</tr>
+			<% @time_array.each do |time|%>
+				<tr>
+				<td><%= time.strftime("%I:%M%p") %></td>
+				</tr>
+			<% end %>
+	</table>
+	
+	<%= form.actions do %>
+		<%= form.action :submit, :as => :button %>
+	<% end %>
+<% end %>

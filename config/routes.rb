@@ -3,6 +3,7 @@ App121::Application.routes.draw do
   
   resources :items
   resources :categories
+  resources :reservations
 
 
 
