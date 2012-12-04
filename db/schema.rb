@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121126174720) do
+ActiveRecord::Schema.define(:version => 20121204155149) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -24,6 +24,13 @@ ActiveRecord::Schema.define(:version => 20121126174720) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  create_table "courts_reservations", :id => false, :force => true do |t|
+    t.integer "court_id"
+    t.integer "reservation_id"
+  end
+
+  add_index "courts_reservations", ["court_id", "reservation_id"], :name => "index_courts_reservations_on_court_id_and_reservation_id"
 
   create_table "items", :force => true do |t|
     t.integer  "item_number"

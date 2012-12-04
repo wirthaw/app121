@@ -55,6 +55,31 @@ describe Item do
 		it "should require a valid date" do
 			@item.errors[:purchase_date].should include("is not a valid date")
 		end
+		
+	end
+	
+	describe "A non-unique item" do
+		before(:each) do
+		    Item.create!(
+				:description => "foobar",
+				:value => 20,
+				:category_id => 1,
+				:item_number => 1,
+				:purchase_date => "10/24/1990"
+			)
+			@item = Item.new(
+				:description => "foobar",
+				:value => 20,
+				:category_id => 1,
+				:item_number => 1,
+				:purchase_date => "10/24/1990"
+			)	
+			@item.valid?			
+		end
+		
+		it "should require a unique item_number within it's category" do
+			@item.errors[:item_number].should include("has already been taken")
+		end		
 	end
 	
 	describe "An item model with good data" do
