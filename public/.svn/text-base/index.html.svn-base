@@ -1,9 +1,9 @@
 <div style="margin:0 auto;width:900px;background:lightblue;text-align:center;">
 <h1>Welcome to Aaron's Awesome IROMS Open Recreation System </h1> 
-<h2>Simple is better </h2>
 <div style="width:500px;margin:0 auto;">
 <p>
 <a href="items" style="float:left;">View Items </a>
+<a href="reservations" style="text-align:center;"> Make a reservation </a>
 <a href="categories" style="float:right;"> View Categories </a>
 <br />
 </p>

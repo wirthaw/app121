@@ -1,4 +1,4 @@
-<%= semantic_form_for :reservation, :url => 'reservations/create' do |form| %>
+<%= semantic_form_for :reservation, :url => '../reservations' do |form| %>
 	<%= form.inputs do %>
 		<%= form.input :user_id %>
 		<%= form.input :number_of_participants %>
@@ -19,7 +19,7 @@
 						<% if @r=court.reservations.detect {|r| r.start_time.strftime("%I:%M%p") <= time.strftime("%I:%M%p") && r.end_time.strftime("%I:%M%p") > time.strftime("%I:%M%p") } %>
 							<td style="background:red;"><%= link_to "CLOSED", reservation_path(@r) %></td>
 						<%else%>
-							<td style="background:lightgreen;">OPEN<br /> <%= form.input :time, :as => :boolean%></td>
+							<td style="background:lightgreen;">OPEN<br /> <%= form.input "court_#{court.id}_times[#{time}]", :as => :boolean, :label => "" %></td>
 						<%end%>
 					<% end %>
 				</tr>

@@ -1,0 +1,11 @@
+<h1><%= "Reservation #{@reservation.id}" %> </h1>
+<p>
+<%= "User Id: #{@reservation.user_id}" %> 
+</p>
+<p>
+<%= "Reservation Date: #{@reservation.reservation_date}" %> <br />
+<%= "Start Time: #{@reservation.start_time}" %> <br />
+<%= "End Time: #{@reservation.end_time}" %> <br />
+<%= "Number of Participants: #{@reservation.number_of_participants}" %> <br />
+</p>
+<%= link_to "Back to Reservations Main Page", reservations_path %>
