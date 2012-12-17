@@ -1,32 +1,57 @@
-<%= semantic_form_for :reservation, :url => '../reservations' do |form| %>
+<%= semantic_form_for @reservation do |form| %>
 	<%= form.inputs do %>
 		<%= form.input :user_id %>
 		<%= form.input :number_of_participants %>
-		<%= form.input :reservation_date %>
+		<%= form.input :reservation_date, :as => :string %>
+		<%= form.input :courts, :as => :check_boxes, :include_blank => false, :collection => Court.all%>
+		<%= form.input :start_time, :as => :select, :collection => @time_array.map{|t| t.strftime("%I:%M%p")}, :include_blank => false %>
+		<%= form.input :end_time, :as => :select, :collection => @time_array.map{|t| t.strftime("%I:%M%p")}, :include_blank => false %>
 	<% end %>
 	
-	<table border="3">
+	<label>
+  		<input type="checkbox" id="show_court_resevations_checkbox" title="Show Open and Reserved Court Times" onchange='showCourtReservations(this);'>
+  			Show Open and Reserved Court Times
+	</label>
+	
+	<%= form.actions do %>
+		<%= form.action :submit, :as => :button %>
+	<% end %>
+	
+	<div id="update_content">
+	<table border="3" id="court_reservation_table" style="display:none;">
 		<tr>
-		<th>Times</th>
-			<% @courts.each do |court| %>
+			<th>Times</th>
+			<% Court.all.each do |court| %>
 				<th> <%= court.name%> </th>
 			<% end %>
 		</tr>
 			<% @time_array.each do |time|%>
 				<tr>
 					<td><%= time.strftime("%I:%M%p") %></td>
-					<% @courts.each do |court| %>
-						<% if @r=court.reservations.detect {|r| r.start_time.strftime("%I:%M%p") <= time.strftime("%I:%M%p") && r.end_time.strftime("%I:%M%p") > time.strftime("%I:%M%p") } %>
+					<% Court.all.each do |court| %>
+						<% if @r = court.reservations.detect {|r| (r.reservation_date == Date.today) && (time.strftime("%H:%M%p") >= r.start_time.strftime("%H:%M%p")) && time.strftime("%H:%M%p") <= r.end_time.strftime("%H:%M%p")} %>
 							<td style="background:red;"><%= link_to "CLOSED", reservation_path(@r) %></td>
 						<%else%>
-							<td style="background:lightgreen;">OPEN<br /> <%= form.input "court_#{court.id}_times[#{time}]", :as => :boolean, :label => "" %></td>
+							<td style="background:lightgreen;">OPEN</td>
 						<%end%>
 					<% end %>
 				</tr>
 			<% end %>
 	</table>
+	</div>
 	
-	<%= form.actions do %>
-		<%= form.action :submit, :as => :button %>
-	<% end %>
 <% end %>
+
+<script type="text/javascript">
+	function showCourtReservations(cb){
+		if(cb.checked)
+		{
+			$('#court_reservation_table').css('display','inline');
+		}
+		else
+		{
+			$('#court_reservation_table').css('display','none');
+		}
+
+	}
+</script>

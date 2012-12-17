@@ -1,6 +1,6 @@
 App121::Application.routes.draw do
   match '/items/search(/:category)', :controller => 'items', :action => 'search'
-  
+ 
   resources :items
   resources :categories
   resources :reservations
