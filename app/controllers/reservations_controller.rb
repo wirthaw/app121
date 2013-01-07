@@ -4,12 +4,6 @@ class ReservationsController < ApplicationController
   end
   
   def load_court_reservations
-  	respond_to do |format|
-  		format.js
-  	end
-  end
-  
-  def new 
     @close_time = Time.parse('11:59pm')
     @current_time = Time.parse('12:00pm')
     @time_array = []
@@ -18,9 +12,27 @@ class ReservationsController < ApplicationController
     	@time_array << @current_time
     	@current_time = (@current_time + 60*30)
     end
-    @courts = Court.all
+    
+    @reservation_date = Date.today
+    
+  	respond_to do |format|
+  	    format.js {render :layout=>false}
+  	end
+  end
+  
+  def new 
+    @close_time = Time.parse('11:59pm')
+    @current_time = Time.parse('12:00pm')
+    @time_array = []
+    while @current_time < @close_time
+    	@time_array << @current_time
+    	@current_time = (@current_time + 60*30)
+    end
+    @reservation_date = Date.today
+    
+    
     @reservation = Reservation.new
-    @reservation.reservation_date = Date.today
+    @reservation.reservation_date = @reservation_date
     @reservation.start_time = Time.parse('12:00pm')
     @reservation.end_time = Time.parse('2:00pm')
   end
@@ -59,7 +71,7 @@ class ReservationsController < ApplicationController
 	end
 	
 	if @reservation.save
-      redirect_to item_path(@reservation)
+      redirect_to reservation_path(@reservation)
       flash[:notice] = "Item saved successfully"
     else
       render(:new)

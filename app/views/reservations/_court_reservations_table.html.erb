@@ -1,4 +1,8 @@
-	<table border="3" id="court_reservation_table" style="display:none;">
+	<div id="court_reservation_div">
+	<h3>Court Reservations for <%= @reservation_date %></h3>
+			
+	<table border="3">
+		<tr><td colspan="<%= Court.all.size+1 %>" style="text-align:center;"><%= link_to "Refresh", {:controller => "reservations", :action => "load_court_reservations"}, :remote => true %></td></tr>
 		<tr>
 			<th>Times</th>
 			<% Court.all.each do |court| %>
@@ -9,7 +13,7 @@
 				<tr>
 					<td><%= time.strftime("%I:%M%p") %></td>
 					<% Court.all.each do |court| %>
-						<% if @r = court.reservations.detect {|r| (r.reservation_date == Date.today) && (time.strftime("%H:%M%p") >= r.start_time.strftime("%H:%M%p")) && time.strftime("%H:%M%p") <= r.end_time.strftime("%H:%M%p")} %>
+						<% if @r = court.reservations.detect {|r| (r.reservation_date == @reservation_date) && (time.strftime("%H:%M%p") >= r.start_time.strftime("%H:%M%p")) && time.strftime("%H:%M%p") <= r.end_time.strftime("%H:%M%p")} %>
 							<td style="background:red;"><%= link_to "CLOSED", reservation_path(@r) %></td>
 						<%else%>
 							<td style="background:lightgreen;">OPEN</td>
@@ -18,3 +22,4 @@
 				</tr>
 			<% end %>
 	</table>
+	</div>

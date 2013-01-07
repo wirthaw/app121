@@ -1,1 +1,1 @@
-$('#update_content').html("<%= render :partial => 'court_reservations_table' %>");
+$("#update_content").html("<%= escape_javascript(render(:partial => 'court_reservations_table')) %>" );
