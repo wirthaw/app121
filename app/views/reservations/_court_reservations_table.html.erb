@@ -2,7 +2,7 @@
 	<h3>Court Reservations for <%= @reservation_date %></h3>
 			
 	<table border="3">
-		<tr><td colspan="<%= Court.all.size+1 %>" style="text-align:center;"><%= link_to "Refresh", {:controller => "reservations", :action => "load_court_reservations"}, :remote => true %></td></tr>
+		<tr><td colspan="<%= Court.all.size+1 %>" style="text-align:center;"><input type="button" id="refresh" onclick='reloadCourtReservations()' value="Refresh"/></td></tr>
 		<tr>
 			<th>Times</th>
 			<% Court.all.each do |court| %>

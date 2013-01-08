@@ -4,6 +4,10 @@ class ReservationsController < ApplicationController
   end
   
   def load_court_reservations
+  	@date = params[:date]
+  	if @date != nil 
+  		@reservation_date = Date.parse(@date)
+  	end
     @close_time = Time.parse('11:59pm')
     @current_time = Time.parse('12:00pm')
     @time_array = []
@@ -12,8 +16,6 @@ class ReservationsController < ApplicationController
     	@time_array << @current_time
     	@current_time = (@current_time + 60*30)
     end
-    
-    @reservation_date = Date.today
     
   	respond_to do |format|
   	    format.js {render :layout=>false}
@@ -74,6 +76,7 @@ class ReservationsController < ApplicationController
       redirect_to reservation_path(@reservation)
       flash[:notice] = "Item saved successfully"
     else
+      @reservation_date = @reservation.reservation_date
       render(:new)
       flash[:notice] = "Could not save Item"
     end
