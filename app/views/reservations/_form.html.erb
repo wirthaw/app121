@@ -13,51 +13,139 @@
   			Show Open and Reserved Court Times for this Reservation Date
 	</label>
 	
-	<%= form.actions do %>
-		<%= form.action :submit, :as => :button %>
-	<% end %>
+	<div id="update_content" style="display:none;">		
+		<%= render 'court_reservations_table' %>
+	</div>
 	
-	<div id="products">
-    <h1 class="ui-widget-header">Items</h1>
+<div id="equipment-reservation">
+<div id="all-items">
+    <h2 class="ui-widget-header">Items</h2>
     <div id="catalog">
-        <h2><a href="#">T-Shirts</a></h2>
-        <div>
-            <ul>
-                <li><h3>Lolcat Shirt</h3><p>detail</p></li>
-                <li><h3>Cheezeburger Shirt</h3><p>detail</p></li>
-            </ul>
-        </div>
-        <h2><a href="#">Bags</a></h2>
-        <div>
-            <ul>
-                <li><h3>Zebra Striped</h3><p>detail</p></li>
-            </ul>
-        </div>
-        <h2><a href="#">Gadgets</a></h2>
-        <div>
-            <ul>
-                <li><h3>iPhone</h3><p>detail</p></li>
-            </ul>
-        </div>
+    	<% Category.all.each do |cat| %>
+        	<h2><a href="#"><%= cat.name %></a></h2>
+        	<div>
+            	<ul>
+            		<% Item.find_all_by_category_id(cat.id).each do |item| %>
+                		<li><div class="item"><span class="item-name"><%= "#{cat.name} ##{item.item_number}" %></span><span class="item-id"><%= item.id %></span></div></li>
+                	<% end %>
+            	</ul>
+        	</div>
+        <% end %>
     </div>
 </div>
- 
-<div id="cart">
-    <h1 class="ui-widget-header">Shopping Cart</h1>
+
+<div id="reservation-cart">
+    <h2 class="ui-widget-header">Equipment Reservation Cart</h2>
     <div class="ui-widget-content">
-    	<div>
-    		<span>Item Name</span>
-    		<span>Item Id</span>
+    	<div class = "cart-head">
+    		<span class="name">Item Name</span>
     	</div>
         <ul>
         </ul>
     </div>
 </div>
+<div class="clear"></div>
+</div>
 	
-	<div id="update_content" style="display:none;">		
-		<%= render 'court_reservations_table' %>
-	</div>
+	<%= form.actions do %>
+		<%= form.action :submit, :as => :button %>
+	<% end %>
 <% end %>
+
+<style>
+
+	/* equipment reservation divs*/
+	#all-items
+	{
+		width:400px;
+		float:left;
+	}
+	#reservation-cart
+	{
+		width:300px;
+		float:left;
+		margin-left:50px;
+	}
+	#equipment-reservation
+	{
+		width:500px;
+		width:100%;	
+		margin-left:50px;
+		margin-bottom:20px;
+	}
+	.item
+	{
+		margin-top:5px;
+		text-align:center;
+		padding:3px;
+		margin-bottom:8px;
+		border:1px solid black;
+	}
+	.item:hover
+	{
+		background:lightgrey;
+		cursor:move;
+	}
+	.item-id
+	{
+		display:none;
+		font-size:1px;
+	}
+	.clear
+	{
+		clear:both;
+	}
+	
+	/* cart */
+	#reservation-cart .cart-head {
+    	overflow: hidden;
+    	margin: 0 10px;
+    	height: 26px;
+    	line-height: 26px;
+    	color: #666;
+    	border-bottom: 1px solid #ddd;
+	}
+	#reservation-cart .cart-head .name { float: left }
+	#reservation-cart ul { padding-bottom: 10px }
+
+	#reservation-cart ul li {
+    	position: relative;
+    	clear: both;
+    	overflow: hidden;
+    	margin: 0 10px;
+    	height: 26px;
+    	line-height: 32px;
+    	border-bottom: 1px dashed #eee;
+	}
+	
+	
+	/* delete button */
+	#reservation-cart ul li button.delete {
+	margin-right:10px;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    filter: alpha(opacity = 100);
+    opacity: 1;
+    width: 20px;
+    line-height: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 11px;
+    border: 0;
+    color: #EE5757;
+    background-color: #eee;
+    border-radius: 3px;
+    cursor: pointer;
+    -webkit-transition: opacity .2s ease;
+    -moz-transition: opacity .2s ease;
+    -o-transition: opacity .2s ease;
+    -ms-transition: opacity .2s ease;
+    transition: opacity .2s ease;
+	}
+	#reservation-cart ul li button.delete:hover {
+    	color: #fff;
+    	background-color: #ffa0a3;
+	}
+</style>
 
 <script type="text/javascript">
 
@@ -70,17 +158,19 @@
 		//shopping cart stuff
 		$( "#catalog" ).accordion();
         $( "#catalog li" ).draggable({
+        	cursor: "move", 
+        	cursorAt: { top: 10, left: 56 },
             appendTo: "body",
             helper: "clone"
         });
-        $( "#cart" ).droppable({
+        $( "#reservation-cart" ).droppable({
             activeClass: "ui-state-default",
             hoverClass: "ui-state-hover",
             accept: ":not(.ui-sortable-helper)",
             drop: function( event, ui ) {
-                $( this ).find( ".placeholder" ).remove();
-                var basket = $(this),move = ui.draggable;
-                addBasket(basket,move);
+                //ui.draggable.remove().html();
+                var cart = $(this),move = ui.draggable;
+                addCart(cart,move);
             }
         });
 	});
@@ -96,10 +186,11 @@
   			});
 		}
 		
-		function addBasket(basket, move) {
-    		basket.find("ul").append('<li>'
-            + '<span class="name">' + move.find("h3").html() + '</span>'            
-            + '<button type="button" class="delete">✕</button></li>');
+		function addCart(cart, move) {
+    		cart.find("ul").append('<li>'
+    		+ '<input type="hidden" name="items[]" value="'+ move.find(".item-id").html() +'">'
+    		+ '<button type="button" class="delete">✕</button>'
+            + '<span class="name">' + move.find(".item-name").html() + '</span></li>');
 		}
 		
 		function showCourtReservations(cb){
@@ -113,7 +204,7 @@
 			}
 		}
 		
-		$("#cart ul li button.delete").live("click", function () {
+		$("#reservation-cart ul li button.delete").live("click", function () {
     		$(this).closest("li").remove();
 		});
 	
