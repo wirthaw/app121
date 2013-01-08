@@ -18,30 +18,25 @@
 	<% end %>
 	
 	<div id="products">
-    <h1 class="ui-widget-header">items</h1>
+    <h1 class="ui-widget-header">Items</h1>
     <div id="catalog">
         <h2><a href="#">T-Shirts</a></h2>
         <div>
             <ul>
-                <li>Lolcat Shirt</li>
-                <li>Cheezeburger Shirt</li>
-                <li>Buckit Shirt</li>
+                <li><h3>Lolcat Shirt</h3><p>detail</p></li>
+                <li><h3>Cheezeburger Shirt</h3><p>detail</p></li>
             </ul>
         </div>
         <h2><a href="#">Bags</a></h2>
         <div>
             <ul>
-                <li>Zebra Striped</li>
-                <li>Black Leather</li>
-                <li>Alligator Leather</li>
+                <li><h3>Zebra Striped</h3><p>detail</p></li>
             </ul>
         </div>
         <h2><a href="#">Gadgets</a></h2>
         <div>
             <ul>
-                <li>iPhone</li>
-                <li>iPod</li>
-                <li>iPad</li>
+                <li><h3>iPhone</h3><p>detail</p></li>
             </ul>
         </div>
     </div>
@@ -50,9 +45,12 @@
 <div id="cart">
     <h1 class="ui-widget-header">Shopping Cart</h1>
     <div class="ui-widget-content">
-        <ol>
-            <li class="placeholder">Add your items here</li>
-        </ol>
+    	<div>
+    		<span>Item Name</span>
+    		<span>Item Id</span>
+    	</div>
+        <ul>
+        </ul>
     </div>
 </div>
 	
@@ -75,20 +73,14 @@
             appendTo: "body",
             helper: "clone"
         });
-        $( "#cart ol" ).droppable({
+        $( "#cart" ).droppable({
             activeClass: "ui-state-default",
             hoverClass: "ui-state-hover",
             accept: ":not(.ui-sortable-helper)",
             drop: function( event, ui ) {
                 $( this ).find( ".placeholder" ).remove();
-                $( "<li></li>" ).text( ui.draggable.text() ).appendTo( this );
-            }
-        }).sortable({
-            items: "li:not(.placeholder)",
-            sort: function() {
-                // gets added unintentionally by droppable interacting with sortable
-                // using connectWithSortable fixes this, but doesn't allow you to customize active/hoverClass options
-                $( this ).removeClass( "ui-state-default" );
+                var basket = $(this),move = ui.draggable;
+                addBasket(basket,move);
             }
         });
 	});
@@ -104,6 +96,12 @@
   			});
 		}
 		
+		function addBasket(basket, move) {
+    		basket.find("ul").append('<li>'
+            + '<span class="name">' + move.find("h3").html() + '</span>'            
+            + '<button type="button" class="delete">✕</button></li>');
+		}
+		
 		function showCourtReservations(cb){
 			if(cb.checked)
 			{
@@ -114,6 +112,10 @@
 				$('#update_content').css('display','none');
 			}
 		}
+		
+		$("#cart ul li button.delete").live("click", function () {
+    		$(this).closest("li").remove();
+		});
 	
 
 </script>
