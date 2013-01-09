@@ -3,6 +3,17 @@ class ReservationsController < ApplicationController
   
   end
   
+  def load_equipment_reservations
+    @date = params[:date]
+  	if @date != nil 
+  		@reservation_date = Date.parse(@date)
+  	end
+  	
+  	respond_to do |format|
+  		format.js{render :layout=>false}
+  	end
+  end
+  
   def load_court_reservations
   	@date = params[:date]
   	if @date != nil 
@@ -31,12 +42,13 @@ class ReservationsController < ApplicationController
     	@current_time = (@current_time + 60*30)
     end
     @reservation_date = Date.today
-    
+    @reservation_start_time = Time.parse('1:59pm')
+    @reservation_end_time = Time.parse('5:00pm')
     
     @reservation = Reservation.new
     @reservation.reservation_date = @reservation_date
-    @reservation.start_time = Time.parse('12:00pm')
-    @reservation.end_time = Time.parse('2:00pm')
+    @reservation.start_time = @reservation_start_time
+    @reservation.end_time = @reservation_end_time
   end
   
   def show

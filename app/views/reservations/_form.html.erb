@@ -4,12 +4,12 @@
 		<%= form.input :number_of_participants %>
 		<%= form.input :reservation_date, :as => :string, :input_html => { :id => "reservationDatePicker" }%>
 		<%= form.input :courts, :as => :check_boxes, :include_blank => false, :collection => Court.all%>
-		<%= form.input :start_time, :as => :select, :collection => @time_array.map{|t| t.strftime("%I:%M%p")}, :include_blank => false %>
-		<%= form.input :end_time, :as => :select, :collection => @time_array.map{|t| t.strftime("%I:%M%p")}, :include_blank => false %>
+		<%= form.input :start_time, :as => :select, :collection => @time_array.map{|t| t.strftime("%I:%M%p")}, :include_blank => false,:input_html => { :id => "reservationStartTime" } %>
+		<%= form.input :end_time, :as => :select, :collection => @time_array.map{|t| t.strftime("%I:%M%p")}, :include_blank => false,:input_html => { :id => "reservationEndTime" } %>
 	<% end %>
 	
 	<label>
-  		<input type="checkbox" id="show_court_resevations_checkbox" title="Show Open and Reserved Court Times" onchange='showCourtReservations(this);'>
+  		<input type="checkbox" id="show_court_reservations_checkbox" title="Show Open and Reserved Court Times" onchange='showCourtReservations(this);'>
   			Show Open and Reserved Court Times for this Reservation Date
 	</label>
 	<br />
@@ -24,46 +24,8 @@
 	</label>
 	<br />
 	
-<div id="equipment-reservation">
-<div id="all-items">
-    <h2 class="ui-widget-header">Items</h2>
-    <div id="catalog">
-    	<% Category.all.each do |cat| %>
-        	<h2><a href="#"><%= cat.name %></a></h2>
-        	<div>
-            	<ul>
-            		<% Item.find_all_by_category_id(cat.id).each do |item| %>
-            			<% if !(item.reservations.detect{|r| r.reservation_date == @reservation_date})%>
-                		<li id=""><div class="item"><span class="item-name"><%= "#{cat.name} ##{item.item_number}" %></span><span class="item-id"><%= item.id %></span></div></li>
-                		<% end %>
-                	<% end %>
-            	</ul>
-        	</div>
-        <% end %>
-    </div>
-</div>
-
-<div id="reservation-cart">
-    <h2 class="ui-widget-header">Equipment Reservation Cart</h2>
-    <div class="ui-widget-content">
-    	<div class = "cart-head">
-    		<span class="name">Item Name</span>
-    	</div>
-        <ul id="reservation-cart-list">
-        <% if @reservation_items != nil %>
-        	<% @reservation_items.each do |i| %>
-        		<% @item = Item.find_by_id(i) %> 
-        		<li>
-        		<input type="hidden" name="items[]" value="<%=@item.id%>">
-        		<button type="button" class="delete" id="<%=@item.id%>">✕</button>
-            	<span class="name"> <%= "#{@item.category.name} ##{@item.item_number}" %></span>
-            	</li>        		
-        	<% end %>
-        <% end %>	
-        </ul>
-    </div>
-</div>
-<div class="clear"></div>
+<div id="equipment_reservation">
+	<%= render 'equipment_reservations_partial' %>
 </div>
 	
 	<%= form.actions do %>
@@ -85,7 +47,7 @@
 		float:left;
 		margin-left:50px;
 	}
-	#equipment-reservation
+	#equipment_reservation
 	{
 		display:none;
 	}
@@ -169,38 +131,68 @@
 	
 		$("#reservationDatePicker").change(function(){
 			reloadCourtReservations();
+			reloadEquipmentReservations();
+			
+		});
+		$("#reservationStartTime").change(function(){
+			reloadEquipmentReservations();
+			
+		});
+		$("#reservationEndTime").change(function(){
+			reloadEquipmentReservations();
+			
 		});
 		$('#reservationDatePicker').datepicker({ dateFormat: "yy-mm-dd" });
 		
-		//shopping cart stuff
-		$( "#catalog" ).accordion({
-			collapsible:true,
-			heightStyle: "content",
-			active: false
-		});
-        $( "#catalog li" ).draggable({
-        	cursor: "move", 
-        	cursorAt: { top: 10, left: 56 },
-            appendTo: "body",
-            helper: "clone"
-        });
-        $( "#reservation-cart" ).droppable({
-            activeClass: "ui-state-default",
-            hoverClass: "ui-state-hover",
-            accept: ":not(.ui-sortable-helper)",
-            drop: function( event, ui ) {
-                //ui.draggable.remove().html();
-                var cart = $(this),move = ui.draggable;
-                addCart(cart,move);
-            }
-        });
-        
+		setupEquipmentShoppingCart();
 	});
+		function setupEquipmentShoppingCart(){
+			//shopping cart stuff
+			$( "#catalog" ).accordion({
+				collapsible:true,
+				heightStyle: "content",
+				active: false
+			});
+        	$( "#catalog li" ).draggable({
+        		cursor: "move", 
+        		cursorAt: { top: 10, left: 56 },
+            	appendTo: "body",
+            	helper: "clone"
+        	});
+        	$( "#reservation-cart" ).droppable({
+            	activeClass: "ui-state-default",
+            	hoverClass: "ui-state-hover",
+            	accept: ":not(.ui-sortable-helper)",
+            	drop: function( event, ui ) {
+                	//ui.draggable.remove().html();
+                	var cart = $(this),move = ui.draggable;
+                	addCart(cart,move);
+            	}
+        	});
+		}
 		
 		function reloadCourtReservations(){
  			var date = $("#reservationDatePicker").val();
   			$.ajax({
     			url: '/reservations/load_court_reservations',
+    			data: {'date': date},
+    			dataType: 'script',
+    			type: 'GET',
+    			success: function(data) { data }
+  			});
+		}
+		
+		function reloadEquipmentReservations(){
+			if($("#show_equipment_reservations_checkbox").attr('checked'))
+			{
+				fetchEquipmentReservations();
+			}
+		}
+		
+		function fetchEquipmentReservations(){
+ 			var date = $("#reservationDatePicker").val();
+  			$.ajax({
+    			url: '/reservations/load_equipment_reservations',
     			data: {'date': date},
     			dataType: 'script',
     			type: 'GET',
@@ -245,12 +237,12 @@
 		function showEquipmentReservation(cb){
 			if(cb.checked)
 			{
-				$('#equipment-reservation').css('display','inline');
-				items = [];
+				reloadEquipmentReservations();
+				$('#equipment_reservation').css('display','inline');
 			}
 			else
 			{
-				$('#equipment-reservation').css('display','none');
+				$('#equipment_reservation').css('display','none');
 				items = [];
 				$('#reservation-cart-list').empty();
 				
