@@ -12,10 +12,17 @@
   		<input type="checkbox" id="show_court_resevations_checkbox" title="Show Open and Reserved Court Times" onchange='showCourtReservations(this);'>
   			Show Open and Reserved Court Times for this Reservation Date
 	</label>
+	<br />
 	
 	<div id="update_content" style="display:none;">		
 		<%= render 'court_reservations_table' %>
 	</div>
+	
+	<label>
+  		<input type="checkbox" id="show_equipment_reservations_checkbox" title="Add Equipment to this Reservation" onchange='showEquipmentReservation(this);'>
+  			Add Equipment to this Reservation
+	</label>
+	<br />
 	
 <div id="equipment-reservation">
 <div id="all-items">
@@ -26,7 +33,9 @@
         	<div>
             	<ul>
             		<% Item.find_all_by_category_id(cat.id).each do |item| %>
-                		<li><div class="item"><span class="item-name"><%= "#{cat.name} ##{item.item_number}" %></span><span class="item-id"><%= item.id %></span></div></li>
+            			<% if !(item.reservations.detect{|r| r.reservation_date == @reservation_date})%>
+                		<li id=""><div class="item"><span class="item-name"><%= "#{cat.name} ##{item.item_number}" %></span><span class="item-id"><%= item.id %></span></div></li>
+                		<% end %>
                 	<% end %>
             	</ul>
         	</div>
@@ -40,7 +49,17 @@
     	<div class = "cart-head">
     		<span class="name">Item Name</span>
     	</div>
-        <ul>
+        <ul id="reservation-cart-list">
+        <% if @reservation_items != nil %>
+        	<% @reservation_items.each do |i| %>
+        		<% @item = Item.find_by_id(i) %> 
+        		<li>
+        		<input type="hidden" name="items[]" value="<%=@item.id%>">
+        		<button type="button" class="delete" id="<%=@item.id%>">✕</button>
+            	<span class="name"> <%= "#{@item.category.name} ##{@item.item_number}" %></span>
+            	</li>        		
+        	<% end %>
+        <% end %>	
         </ul>
     </div>
 </div>
@@ -68,10 +87,7 @@
 	}
 	#equipment-reservation
 	{
-		width:500px;
-		width:100%;	
-		margin-left:50px;
-		margin-bottom:20px;
+		display:none;
 	}
 	.item
 	{
@@ -150,13 +166,18 @@
 <script type="text/javascript">
 
 	$(document).ready(function() {
+	
 		$("#reservationDatePicker").change(function(){
 			reloadCourtReservations();
 		});
 		$('#reservationDatePicker').datepicker({ dateFormat: "yy-mm-dd" });
 		
 		//shopping cart stuff
-		$( "#catalog" ).accordion();
+		$( "#catalog" ).accordion({
+			collapsible:true,
+			heightStyle: "content",
+			active: false
+		});
         $( "#catalog li" ).draggable({
         	cursor: "move", 
         	cursorAt: { top: 10, left: 56 },
@@ -173,6 +194,7 @@
                 addCart(cart,move);
             }
         });
+        
 	});
 		
 		function reloadCourtReservations(){
@@ -187,10 +209,26 @@
 		}
 		
 		function addCart(cart, move) {
-    		cart.find("ul").append('<li>'
-    		+ '<input type="hidden" name="items[]" value="'+ move.find(".item-id").html() +'">'
-    		+ '<button type="button" class="delete">✕</button>'
+			var id = move.find(".item-id").html();
+			
+			var alreadyInCart = false;
+			
+			$("input:hidden").each(function (){
+				if($(this).val() == id)
+				{
+					alreadyInCart = true;
+				}
+
+			});
+			
+			if(!alreadyInCart)
+			{
+			cart.find("ul").append('<li>'
+    		+ '<input type="hidden" name="items[]" value="'+ id +'">'
+    		+ '<button type="button" class="delete" id="' + id + '">✕</button>'
             + '<span class="name">' + move.find(".item-name").html() + '</span></li>');
+            }
+    		
 		}
 		
 		function showCourtReservations(cb){
@@ -204,8 +242,31 @@
 			}
 		}
 		
+		function showEquipmentReservation(cb){
+			if(cb.checked)
+			{
+				$('#equipment-reservation').css('display','inline');
+				items = [];
+			}
+			else
+			{
+				$('#equipment-reservation').css('display','none');
+				items = [];
+				$('#reservation-cart-list').empty();
+				
+			}
+		}
+
+		
 		$("#reservation-cart ul li button.delete").live("click", function () {
     		$(this).closest("li").remove();
+    		//item array management
+    		var id = $(this).id;
+    		var position = $.inArray(id,items);
+    		if(position != -1)
+    		{
+    			items.splice(position,1);
+    		}
 		});
 	
 

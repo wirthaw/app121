@@ -61,6 +61,7 @@ class ReservationsController < ApplicationController
 	@reservation.number_of_participants = params[:reservation][:number_of_participants]
 	@reservation.user_id = params[:reservation][:user_id]
 	
+	@reservation_items = params[:items]
 	@reservation_courts = params[:reservation][:court_ids]
 	
 	if @reservation_courts != nil
@@ -69,6 +70,13 @@ class ReservationsController < ApplicationController
 				@temp_court = Court.find_by_id(court)
 				@reservation.courts << @temp_court
 			end
+		end
+	end
+	
+	if @reservation_items != nil
+		@reservation_items.each do |i|
+			@temp_item = Item.find_by_id(i)
+			@reservation.items << @temp_item
 		end
 	end
 	

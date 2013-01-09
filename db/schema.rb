@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121204155149) do
+ActiveRecord::Schema.define(:version => 20130109172913) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -41,6 +41,13 @@ ActiveRecord::Schema.define(:version => 20121204155149) do
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
   end
+
+  create_table "items_reservations", :id => false, :force => true do |t|
+    t.integer "item_id"
+    t.integer "reservation_id"
+  end
+
+  add_index "items_reservations", ["item_id", "reservation_id"], :name => "index_items_reservations_on_item_id_and_reservation_id"
 
   create_table "reservations", :force => true do |t|
     t.date     "reservation_date"

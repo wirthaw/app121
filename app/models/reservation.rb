@@ -1,6 +1,6 @@
 class Reservation < ActiveRecord::Base
-  has_many :items
   has_and_belongs_to_many :courts
+  has_and_belongs_to_many :items 
 
   attr_accessible :end_time, :number_of_participants, :reservation_date, :start_time, :user_id
   
