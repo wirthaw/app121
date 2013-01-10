@@ -7,5 +7,14 @@
 <%= "Start Time: #{@reservation.start_time}" %> <br />
 <%= "End Time: #{@reservation.end_time}" %> <br />
 <%= "Number of Participants: #{@reservation.number_of_participants}" %> <br />
+<%= "Reserved Courts: "%> <br />
+<% @reservation.courts.each do |c|%>
+	&nbsp;<%= " #{c.name} " %><br />
+<% end %>
+<%= "Reserved Items:" %><br />
+<% @reservation.items.each do |i|%>
+	&nbsp;<%= " #{i.category.name} ##{i.item_number} " %><br />
+<% end %>
+
 </p>
 <%= link_to "Back to Reservations Main Page", reservations_path %>

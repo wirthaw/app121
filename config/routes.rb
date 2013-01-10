@@ -1,5 +1,7 @@
 App121::Application.routes.draw do
   match '/items/search(/:category)', :controller => 'items', :action => 'search'
+  match '/reservations/search', :controller => 'reservations', :action => 'search'
+
   match '/reservations/load_court_reservations', :controller => 'reservations', :action => 'load_court_reservations'
   match '/reservations/load_equipment_reservations', :controller => 'reservations', :action => 'load_equipment_reservations'
  

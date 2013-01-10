@@ -1,0 +1,25 @@
+	<div id="court_reservation_div">
+	<h3>Court Reservations for <%= @reservation_date %></h3>
+			
+	<table border="3">
+		<tr><td colspan="<%= Court.all.size+1 %>" style="text-align:center;"><button type="button" id="refresh" onclick='reloadCourtReservations()'>Refresh</Button></td></tr>
+		<tr>
+			<th>Times</th>
+			<% Court.all.each do |court| %>
+				<th> <%= court.name%> </th>
+			<% end %>
+		</tr>
+			<% @time_array.each do |time|%>
+				<tr>
+					<td><%= time.strftime("%I:%M%p") %></td>
+					<% Court.all.each do |court| %>
+						<% if @r = court.reservations.detect {|r| (r.reservation_date == @reservation_date) && (time.strftime("%H:%M%p") >= r.start_time.strftime("%H:%M%p")) && time.strftime("%H:%M%p") <= r.end_time.strftime("%H:%M%p")} %>
+							<td style="background:red;"><%= link_to "CLOSED", reservation_path(@r) %></td>
+						<%else%>
+							<td style="background:lightgreen;">OPEN</td>
+						<%end%>
+					<% end %>
+				</tr>
+			<% end %>
+	</table>
+	</div>

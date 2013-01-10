@@ -1,0 +1,40 @@
+<div id="all-items">
+    <h2 class="ui-widget-header">Items</h2>
+    <div id="catalog">
+    	<% Category.all.each do |cat| %>
+        	<h2><a href="#"><%= cat.name %></a></h2>
+        	<div>
+            	<ul>
+            		<% Item.find_all_by_category_id(cat.id).each do |item| %>
+            		<% @r = item.reservations.detect{|r| r.reservation_date == @reservation_date && ((@reservation_start_time.strftime("%H:%M%p") >= r.start_time.strftime("%H:%M%p") && @reservation_start_time.strftime("%H:%M%p") < r.end_time.strftime("%H:%M%p")) || (@reservation_end_time.strftime("%H:%M%p") > r.start_time.strftime("%H:%M%p") && @reservation_end_time.strftime("%H:%M%p") <=  r.end_time.strftime("%H:%M%p")) || (@reservation_start_time.strftime("%H:%M%p") < r.start_time.strftime("%H:%M%p") && @reservation_end_time.strftime("%H:%M%p") >  r.end_time.strftime("%H:%M%p")))} %>
+            		<%if !@r %>
+                			<li><div class="item"><span class="item-name"><%= "#{cat.name} ##{item.item_number}" %></span><span class="item-id"><%= item.id %></span></div></li>
+                	<% end %>
+                	<% end %>
+            	</ul>
+        	</div>
+        <% end %>
+    </div>
+</div>
+
+<div id="reservation-cart">
+    <h2 class="ui-widget-header">Equipment Reservation Cart</h2>
+    <div class="ui-widget-content">
+    	<div class = "cart-head">
+    		<span class="name">Item Name</span>
+    	</div>
+        <ul id="reservation-cart-list">
+        <% if @reservation_items != nil %>
+        	<% @reservation_items.each do |i| %>
+        		<% @item = Item.find_by_id(i) %> 
+        		<li>
+        		<input type="hidden" name="items[]" value="<%=@item.id%>">
+        		<button type="button" class="delete" id="<%=@item.id%>">✕</button>
+            	<span class="name"> <%= "#{@item.category.name} ##{@item.item_number}" %></span>
+            	</li>        		
+        	<% end %>
+        <% end %>	
+        </ul>
+    </div>
+</div>
+<div class="clear"></div>

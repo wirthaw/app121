@@ -42,6 +42,9 @@ describe Reservation do
 		
 		it "should be a numeric number of participants" do
 			@reservation.errors[:number_of_participants].should include("is not a number")
+			@reservation.number_of_participants = -1
+			@reservation.valid?
+			@reservation.errors[:number_of_participants].should include("must be greater than or equal to 0")
 		end
 		
 		it "should have a start time after 8:00am" do

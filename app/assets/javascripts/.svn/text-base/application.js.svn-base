@@ -11,5 +11,9 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require jquery
+//= require jquery.ui.droppable
+//= require jquery.ui.accordion
+//= require jquery.ui.draggable
+//= require jquery.ui.datepicker
 //= require jquery_ujs
 //= require_tree .

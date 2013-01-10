@@ -1,14 +1,14 @@
 10
 
 dir
-7371
+7516
 svn://apptest.uwec.edu/webdev/app121/trunk/app/views/reservations
 svn://apptest.uwec.edu/webdev
 
 
 
-2012-12-04T15:11:02.204855Z
-7371
+2013-01-10T14:46:33.646810Z
+7516
 wirthaw
 
 
@@ -26,16 +26,16 @@ wirthaw
 
 b809c943-2d83-514f-ad39-8d07f70e4990
 
-index.html.erb
+_court_reservations_table.html.erb
 file
-7372
 
 
 
-2012-12-04T17:10:12.000000Z
-19aec5a78a635319402cc3d6f5584a9f
-2012-12-04T17:49:00.995970Z
-7372
+
+2013-01-09T19:59:18.000000Z
+e20ab69e148da13b5a0532a779bb5323
+2013-01-10T14:46:33.646810Z
+7516
 wirthaw
 
 
@@ -58,7 +58,109 @@ wirthaw
 
 
 
-94
+969
+
+_equipment_reservations_partial.html.erb
+file
+
+
+
+
+2013-01-09T22:53:50.000000Z
+c013da7588e37fa073ebfbfcdc59c658
+2013-01-10T14:46:33.646810Z
+7516
+wirthaw
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1956
+
+index.html.erb
+file
+
+
+
+
+2013-01-09T17:10:10.000000Z
+48a521ef64b8a34b2b2b7e96b7fb0dd7
+2013-01-10T14:46:33.646810Z
+7516
+wirthaw
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+89
+
+load_court_reservations.js.erb
+file
+
+
+
+
+2013-01-09T21:09:55.000000Z
+6d24b78b7dad1a7eaab2a6bef7d6aff9
+2013-01-10T14:46:33.646810Z
+7516
+wirthaw
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+104
 
 new.html.erb
 file
@@ -66,10 +168,10 @@ file
 
 
 
-2012-12-04T15:09:17.000000Z
+2012-12-03T15:29:01.000000Z
 d7adb93160997d4cf7d2bd6546401a3e
-2012-12-04T15:11:02.204855Z
-7371
+2013-01-10T14:46:33.646810Z
+7516
 wirthaw
 
 
@@ -96,14 +198,14 @@ wirthaw
 
 show.html.erb
 file
-7372
 
 
 
-2012-12-04T17:27:20.000000Z
+
+2012-12-05T15:31:36.000000Z
 c2189cb2336558908b0a490f3dba03e1
-2012-12-04T17:49:00.995970Z
-7372
+2013-01-10T14:46:33.646810Z
+7516
 wirthaw
 
 
@@ -130,14 +232,14 @@ wirthaw
 
 _form.html.erb
 file
-7372
 
 
 
-2012-12-04T17:37:36.000000Z
-79a6ee56a499aea21a5f4fe848508aaf
-2012-12-04T17:49:00.995970Z
-7372
+
+2013-01-09T22:21:36.000000Z
+029bedc59bf5b3298d0e70aea011cf5c
+2013-01-10T14:46:33.646810Z
+7516
 wirthaw
 
 
@@ -160,5 +262,73 @@ wirthaw
 
 
 
-929
+6462
+
+load_equipment_reservations.js.erb
+file
+
+
+
+
+2013-01-09T21:46:24.000000Z
+a1956de0a5bbb3d42639f5b1383add9c
+2013-01-10T14:46:33.646810Z
+7516
+wirthaw
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+146
+
+create.html.erb
+file
+
+
+
+
+2012-12-11T15:15:23.000000Z
+0071dba8525c997564906fcb83047df2
+2013-01-10T14:46:33.646810Z
+7516
+wirthaw
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+87
 

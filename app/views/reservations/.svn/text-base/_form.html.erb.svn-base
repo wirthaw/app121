@@ -2,31 +2,264 @@
 	<%= form.inputs do %>
 		<%= form.input :user_id %>
 		<%= form.input :number_of_participants %>
-		<%= form.input :reservation_date %>
+		<%= form.input :reservation_date, :as => :string, :input_html => { :id => "reservationDatePicker" }%>
+		<%= form.input :courts, :as => :check_boxes, :include_blank => false, :collection => Court.all%>
+		<%= form.input :start_time, :as => :select, :collection => @time_array.map{|t| t.strftime("%I:%M%p")}, :include_blank => false,:input_html => { :id => "reservationStartTime" } %>
+		<%= form.input :end_time, :as => :select, :collection => @time_array.map{|t| t.strftime("%I:%M%p")}, :include_blank => false,:input_html => { :id => "reservationEndTime" } %>
 	<% end %>
 	
-	<table border="3">
-		<tr>
-		<th>Times</th>
-			<% @courts.each do |court| %>
-				<th> <%= court.name%> </th>
-			<% end %>
-		</tr>
-			<% @time_array.each do |time|%>
-				<tr>
-					<td><%= time.strftime("%I:%M%p") %></td>
-					<% @courts.each do |court| %>
-						<% if @r=court.reservations.detect {|r| r.start_time.strftime("%I:%M%p") <= time.strftime("%I:%M%p") && r.end_time.strftime("%I:%M%p") > time.strftime("%I:%M%p") } %>
-							<td style="background:red;"><%= link_to "CLOSED", reservation_path(@r) %></td>
-						<%else%>
-							<td style="background:lightgreen;">OPEN</td>
-						<%end%>
-					<% end %>
-				</tr>
-			<% end %>
-	</table>
+	<label>
+  		<input type="checkbox" id="show_court_reservations_checkbox" title="Show Open and Reserved Court Times" onchange='showCourtReservations(this);'>
+  			Show Open and Reserved Court Times for this Reservation Date
+	</label>
+	<br />
+	
+	<div id="update_content" style="display:none;">		
+		<%= render 'court_reservations_table' %>
+	</div>
+	
+	<label>
+  		<input type="checkbox" id="show_equipment_reservations_checkbox" title="Add Equipment to this Reservation" onchange='showEquipmentReservation(this);'>
+  			Add Equipment to this Reservation
+	</label>
+	<br />
+	
+<div id="equipment_reservation">
+	<%= render 'equipment_reservations_partial' %>
+</div>
 	
 	<%= form.actions do %>
 		<%= form.action :submit, :as => :button %>
 	<% end %>
 <% end %>
+
+<style>
+
+	/* equipment reservation divs*/
+	#all-items
+	{
+		width:400px;
+		float:left;
+	}
+	#reservation-cart
+	{
+		width:300px;
+		float:left;
+		margin-left:50px;
+	}
+	#equipment_reservation
+	{
+		display:none;
+	}
+	.item
+	{
+		margin-top:5px;
+		text-align:center;
+		padding:3px;
+		margin-bottom:8px;
+		border:1px solid black;
+	}
+	.item:hover
+	{
+		background:lightgrey;
+		cursor:move;
+	}
+	.item-id
+	{
+		display:none;
+		font-size:1px;
+	}
+	.clear
+	{
+		clear:both;
+	}
+	
+	/* cart */
+	#reservation-cart .cart-head {
+    	overflow: hidden;
+    	margin: 0 10px;
+    	height: 26px;
+    	line-height: 26px;
+    	color: #666;
+    	border-bottom: 1px solid #ddd;
+	}
+	#reservation-cart .cart-head .name { float: left }
+	#reservation-cart ul { padding-bottom: 10px }
+
+	#reservation-cart ul li {
+    	position: relative;
+    	clear: both;
+    	overflow: hidden;
+    	margin: 0 10px;
+    	height: 26px;
+    	line-height: 32px;
+    	border-bottom: 1px dashed #eee;
+	}
+	
+	
+	/* delete button */
+	#reservation-cart ul li button.delete {
+	margin-right:10px;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    filter: alpha(opacity = 100);
+    opacity: 1;
+    width: 20px;
+    line-height: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 11px;
+    border: 0;
+    color: #EE5757;
+    background-color: #eee;
+    border-radius: 3px;
+    cursor: pointer;
+    -webkit-transition: opacity .2s ease;
+    -moz-transition: opacity .2s ease;
+    -o-transition: opacity .2s ease;
+    -ms-transition: opacity .2s ease;
+    transition: opacity .2s ease;
+	}
+	#reservation-cart ul li button.delete:hover {
+    	color: #fff;
+    	background-color: #ffa0a3;
+	}
+</style>
+
+<script type="text/javascript">
+
+	$(document).ready(function() {
+	
+		$("#reservationDatePicker").change(function(){
+			reloadCourtReservations();
+			reloadEquipmentReservations();
+			
+		});
+		$("#reservationStartTime").change(function(){
+			reloadEquipmentReservations();
+			
+		});
+		$("#reservationEndTime").change(function(){
+			reloadEquipmentReservations();
+			
+		});
+		$('#reservationDatePicker').datepicker({ dateFormat: "yy-mm-dd" });
+		
+		setupEquipmentShoppingCart();
+	});
+		function setupEquipmentShoppingCart(){
+			//shopping cart stuff
+			$( "#catalog" ).accordion({
+				collapsible:true,
+				heightStyle: "content",
+				active: false
+			});
+        	$( "#catalog li" ).draggable({
+        		cursor: "move", 
+        		cursorAt: { top: 10, left: 56 },
+            	appendTo: "body",
+            	helper: "clone"
+        	});
+        	$( "#reservation-cart" ).droppable({
+            	activeClass: "ui-state-default",
+            	hoverClass: "ui-state-hover",
+            	accept: ":not(.ui-sortable-helper)",
+            	drop: function( event, ui ) {
+                	//ui.draggable.remove().html();
+                	var cart = $(this),move = ui.draggable;
+                	addCart(cart,move);
+            	}
+        	});
+		}
+		
+		function reloadCourtReservations(){
+ 			var date = $("#reservationDatePicker").val();
+  			$.ajax({
+    			url: '/reservations/load_court_reservations',
+    			data: {'date': date},
+    			dataType: 'script',
+    			type: 'GET',
+    			success: function(data) { data }
+  			});
+		}
+		
+		function reloadEquipmentReservations(){
+			if($("#show_equipment_reservations_checkbox").attr('checked'))
+			{
+				fetchEquipmentReservations();
+			}
+		}
+		
+		function fetchEquipmentReservations(){
+ 			var date = $("#reservationDatePicker").val();
+  			$.ajax({
+    			url: '/reservations/load_equipment_reservations',
+    			data: {'date': date},
+    			dataType: 'script',
+    			type: 'GET',
+    			success: function(data) { data }
+  			});
+		}
+		
+		function addCart(cart, move) {
+			var id = move.find(".item-id").html();
+			
+			var alreadyInCart = false;
+			
+			$("input:hidden").each(function (){
+				if($(this).val() == id)
+				{
+					alreadyInCart = true;
+				}
+
+			});
+			
+			if(!alreadyInCart)
+			{
+			cart.find("ul").append('<li>'
+    		+ '<input type="hidden" name="items[]" value="'+ id +'">'
+    		+ '<button type="button" class="delete" id="' + id + '">✕</button>'
+            + '<span class="name">' + move.find(".item-name").html() + '</span></li>');
+            }
+    		
+		}
+		
+		function showCourtReservations(cb){
+			if(cb.checked)
+			{
+				$('#update_content').css('display','inline');
+			}
+			else
+			{
+				$('#update_content').css('display','none');
+			}
+		}
+		
+		function showEquipmentReservation(cb){
+			if(cb.checked)
+			{
+				reloadEquipmentReservations();
+				$('#equipment_reservation').css('display','inline');
+			}
+			else
+			{
+				$('#equipment_reservation').css('display','none');
+				items = [];
+				$('#reservation-cart-list').empty();
+				
+			}
+		}
+
+		
+		$("#reservation-cart ul li button.delete").live("click", function () {
+    		$(this).closest("li").remove();
+    		//item array management
+    		var id = $(this).id;
+    		var position = $.inArray(id,items);
+    		if(position != -1)
+    		{
+    			items.splice(position,1);
+    		}
+		});
+	
+
+</script>

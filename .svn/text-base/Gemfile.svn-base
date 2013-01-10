@@ -5,6 +5,7 @@ gem 'bootstrap-sass', '2.0.4'
 gem 'bcrypt-ruby', '3.0.1'
 gem 'formtastic'
 gem 'validates_timeliness', '~> 3.0.2'
+gem 'jquery-ui-rails'
 
 
 group :development, :test do
