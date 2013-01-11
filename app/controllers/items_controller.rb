@@ -40,6 +40,7 @@ class ItemsController < ApplicationController
       redirect_to item_path
       flash[:notice] = "Item successfully updated"
     else
+      @category = Category.find(@item.category_id)
       render(:edit)
       flash[:notice] = "Item could not be updated!"
     end

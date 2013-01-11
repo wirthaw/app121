@@ -2,15 +2,35 @@
 <%= semantic_form_for :reservation, :url => '/reservations/search' do |form| %>
 	<%= form.inputs do %>
 		<%= form.input :user_id %>
-		<%= form.input :reservation_date %>
+		<%= form.input :reservation_date, :input_html => { :id => "reservationDatePicker" } %>
 	<% end %>
 	<%= form.actions do %>
 		<%= form.action :submit, :as => :button, :label => "Search" %>
 	<% end %>
 <% end %>
-
-<% if @reservations != nil %>
-	<%= @reservations.count %>
+<% if @reservations != nil && @reservations.count > 0%>
+	<table border="1">
+	<tr><th>User</th><th>Reservation Id</th><th>Reservation Date</th><th>Reservation Start Time</th><th>Reservation End Time</th><th></th><th></th></tr>
+	<% @reservations.each do |r|%>
+		<tr>
+			<td><%=r.user_id%></td>
+			<td><%=r.id%></td>
+			<td><%=r.reservation_date%></td>
+			<td><%=r.start_time.strftime("%I:%M%p")%></td>
+			<td><%=r.end_time.strftime("%I:%M%p")%></td>
+			<td><%= link_to "View Reservation", reservation_path(r) %></td>
+			<td><%= button_to "Delete", r, :method => :delete %></td>
+		</tr>
+	<% end %>
+	</table>
+<% elsif @reservations != nil && @reservations.count == 0 %>
+	No Reservations Found
 <% end %>
 
 <p><%= link_to "Create a New Reservation", new_reservation_path %></p>
+<p><%= link_to "Back to Reservations Main", reservations_path %></p>
+
+
+<script type="text/javascript">
+	$('#reservationDatePicker').datepicker({ dateFormat: "yy-mm-dd" });
+</script>

@@ -16,4 +16,5 @@ class Reservation < ActiveRecord::Base
      						:allow_nil => false
      						
   validates_date :reservation_date
+  
 end

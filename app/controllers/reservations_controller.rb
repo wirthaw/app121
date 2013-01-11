@@ -75,6 +75,17 @@ class ReservationsController < ApplicationController
 		
   end
   
+  def destroy
+    @r = Reservation.find(params[:id])
+    if @r.destroy
+      redirect_to "/reservations/search"
+      flash[:notice] = "Category has been removed"
+    else
+      redirect_to "/reservations/search"
+      flash[:error] = "Category could not be removed" 
+    end
+  end
+  
   def search
   	if params[:reservation] != nil
   		begin

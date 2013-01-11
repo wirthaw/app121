@@ -1,0 +1,16 @@
+<h1>Search for a Reservation</h1>
+<%= semantic_form_for :reservation, :url => '/reservations/search' do |form| %>
+	<%= form.inputs do %>
+		<%= form.input :user_id %>
+		<%= form.input :reservation_date %>
+	<% end %>
+	<%= form.actions do %>
+		<%= form.action :submit, :as => :button, :label => "Search" %>
+	<% end %>
+<% end %>
+
+<% if @reservations != nil %>
+	<%= @reservations.count %>
+<% end %>
+
+<p><%= link_to "Create a New Reservation", new_reservation_path %></p>
